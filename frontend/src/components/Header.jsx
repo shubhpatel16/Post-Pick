@@ -41,6 +41,18 @@ const Header = () => {
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
+              <NavDropdown title='Categories' id='categories'>
+                <NavDropdown.Item as={Link} to='/category/men'>
+                  Men
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to='/category/women'>
+                  Women
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to='/category/kids'>
+                  Kids
+                </NavDropdown.Item>
+              </NavDropdown>
+
               <SearchBox />
               <Nav.Link as={Link} to='/cart'>
                 <FaShoppingCart /> Cart

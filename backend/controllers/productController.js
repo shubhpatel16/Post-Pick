@@ -8,6 +8,7 @@ const getProducts = asyncHandler(async (req, res) => {
   const pageSize = process.env.PAGINATION_LIMIT || 8;
   const page = Number(req.query.pageNumber) || 1;
 
+  // 🔍 Keyword search
   const keyword = req.query.keyword
     ? {
         name: {
@@ -17,19 +18,35 @@ const getProducts = asyncHandler(async (req, res) => {
       }
     : {};
 
+  // 🧥 Category filter
   const category = req.query.category
     ? { category: req.query.category }
     : {};
 
-  const count = await Product.countDocuments({
-    ...keyword,
-    ...category,
-  });
+  // 💰 Price filter
+  const priceFilter = {};
+  if (req.query.minPrice) {
+    priceFilter.$gte = Number(req.query.minPrice);
+  }
+  if (req.query.maxPrice) {
+    priceFilter.$lte = Number(req.query.maxPrice);
+  }
 
-  const products = await Product.find({
+  const price =
+    Object.keys(priceFilter).length > 0
+      ? { price: priceFilter }
+      : {};
+
+  // 🧠 Combine all filters
+  const filter = {
     ...keyword,
     ...category,
-  })
+    ...price,
+  };
+
+  const count = await Product.countDocuments(filter);
+
+  const products = await Product.find(filter)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
@@ -39,6 +56,8 @@ const getProducts = asyncHandler(async (req, res) => {
     pages: Math.ceil(count / pageSize),
   });
 });
+
+
 
 
 
