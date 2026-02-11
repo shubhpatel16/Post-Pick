@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import asyncHandler from '../middleware/asyncHandler.js';
 import Product from '../models/productModel.js';
 
@@ -19,9 +20,7 @@ const getProducts = asyncHandler(async (req, res) => {
     : {};
 
   // 🧥 Category filter
-  const category = req.query.category
-    ? { category: req.query.category }
-    : {};
+  const category = req.query.category ? { category: req.query.category } : {};
 
   // 💰 Price filter
   const priceFilter = {};
@@ -33,20 +32,41 @@ const getProducts = asyncHandler(async (req, res) => {
   }
 
   const price =
-    Object.keys(priceFilter).length > 0
-      ? { price: priceFilter }
-      : {};
+    Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
 
-  // 🧠 Combine all filters
+  // 🧠 Combine base filters
   const filter = {
     ...keyword,
     ...category,
     ...price,
   };
 
+  // ❤️ Wishlist filter
+  if (req.query.wishlist) {
+    const ids = req.query.wishlist
+      .split(',')
+      .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+    filter._id = { $in: ids };
+  }
+
+  // 🔢 Count
   const count = await Product.countDocuments(filter);
 
+  // 🔽 Sorting
+  let sortOption = { createdAt: -1 };
+
+  if (req.query.sort === 'price_asc') {
+    sortOption = { price: 1 };
+  } else if (req.query.sort === 'price_desc') {
+    sortOption = { price: -1 };
+  } else if (req.query.sort === 'rating') {
+    sortOption = { rating: -1 };
+  }
+
+  // 📦 Fetch products
   const products = await Product.find(filter)
+    .sort(sortOption)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
@@ -56,10 +76,6 @@ const getProducts = asyncHandler(async (req, res) => {
     pages: Math.ceil(count / pageSize),
   });
 });
-
-
-
-
 
 // @desc    Fetch single product
 // @route   GET /api/products/:id

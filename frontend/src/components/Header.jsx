@@ -7,6 +7,7 @@ import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
 import logo from '../assets/logo.png';
 import { resetCart } from '../slices/cartSlice';
+import { FaHeart } from 'react-icons/fa';
 
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -54,6 +55,10 @@ const Header = () => {
               </NavDropdown>
 
               <SearchBox />
+              <Link to='/wishlist' className='nav-link'>
+                <FaHeart /> Wishlist
+              </Link>
+
               <Nav.Link as={Link} to='/cart'>
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (

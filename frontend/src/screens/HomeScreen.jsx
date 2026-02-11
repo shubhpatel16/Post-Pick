@@ -14,6 +14,7 @@ import Meta from '../components/Meta';
 const HomeScreen = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [sort, setSort] = useState('newest');
   const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
 
@@ -25,6 +26,7 @@ const HomeScreen = () => {
     category,
     minPrice,
     maxPrice,
+    sort,
   });
 
   return (
@@ -37,7 +39,6 @@ const HomeScreen = () => {
         </Link>
       )}
 
-      {/* 🔽 PRICE FILTER START */}
       <Row className='mb-4 align-items-end'>
         <Col md={3}>
           <Form.Group>
@@ -64,13 +65,25 @@ const HomeScreen = () => {
         </Col>
 
         <Col md={2}>
+          <Form.Group>
+            <Form.Label>Sort By</Form.Label>
+            <Form.Select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value='newest'>Newest</option>
+              <option value='price_asc'>Price: Low to High</option>
+              <option value='price_desc'>Price: High to Low</option>
+              <option value='rating'>Top Rated</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col md={2}>
           <Button
             className='w-100'
             onClick={() =>
               navigate(
                 category
-                  ? `/category/${category}?minPrice=${minPrice}&maxPrice=${maxPrice}`
-                  : `/?minPrice=${minPrice}&maxPrice=${maxPrice}`
+                  ? `/category/${category}?minPrice=${minPrice}&maxPrice=${maxPrice}&sort=${sort}`
+                  : `/?minPrice=${minPrice}&maxPrice=${maxPrice}&sort=${sort}`
               )
             }
           >
@@ -105,6 +118,7 @@ const HomeScreen = () => {
             category={category}
             minPrice={minPrice}
             maxPrice={maxPrice}
+            sort={sort}
             keyword={keyword ? keyword : ''}
           />
         </>

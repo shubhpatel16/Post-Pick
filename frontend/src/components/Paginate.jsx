@@ -8,6 +8,7 @@ const Paginate = ({
   category = '',
   minPrice = '',
   maxPrice = '',
+  sort = '',
   isAdmin = false,
 }) => {
   if (pages <= 1) return null;
@@ -21,11 +22,7 @@ const Paginate = ({
           as={Link}
           to={
             !isAdmin
-              ? `/${category ? `category/${category}` : ''}?pageNumber=${x + 1}${
-                  keyword ? `&keyword=${keyword}` : ''
-                }${minPrice ? `&minPrice=${minPrice}` : ''}${
-                  maxPrice ? `&maxPrice=${maxPrice}` : ''
-                }`
+              ? `/category/${category}?pageNumber=${x + 1}&minPrice=${minPrice}&maxPrice=${maxPrice}&sort=${sort}`
               : `/admin/productlist/${x + 1}`
           }
         >
