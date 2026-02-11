@@ -3,21 +3,41 @@ import { useGetDashboardStatsQuery } from '../../slices/adminApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
+  CartesianGrid,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
 } from 'recharts';
+import { Button } from 'react-bootstrap';
 
 const AdminDashboardScreen = () => {
   const { data, isLoading, error } = useGetDashboardStatsQuery();
+  const stats = data || {};
+
+  const exportCSV = () => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+    window.open(
+      `http://localhost:5001/api/admin/export-csv?token=${userInfo.token}`,
+      '_blank'
+    );
+  };
 
   return (
     <>
       <h1 className='mb-4'>Admin Dashboard</h1>
+
+      <Button variant='success' className='mb-3' onClick={exportCSV}>
+        Export Sales CSV
+      </Button>
 
       {isLoading ? (
         <Loader />
@@ -99,6 +119,62 @@ const AdminDashboardScreen = () => {
             )}
           </Card>
 
+          {/* Top Selling Products Chart */}
+          <div className='card p-6 mb-8'>
+            <h2 className='text-2xl font-bold mb-4'>Top Selling Products</h2>
+
+            <ResponsiveContainer width='100%' height={300}>
+              <BarChart data={stats.topSellingProducts}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey='totalSold' fill='#6366f1' />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Order Status Distribution */}
+          <div className='card p-6 mb-8'>
+            <h2 className='text-2xl font-bold mb-4'>
+              Order Status Distribution
+            </h2>
+
+            <ResponsiveContainer width='100%' height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Delivered', value: stats.deliveredOrders },
+                    { name: 'Paid', value: stats.paidOrders },
+                    { name: 'Unpaid', value: stats.unpaidOrders },
+                  ]}
+                  dataKey='value'
+                  outerRadius={100}
+                  label
+                >
+                  <Cell fill='#22c55e' />
+                  <Cell fill='#3b82f6' />
+                  <Cell fill='#f59e0b' />
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Customer Growth */}
+          <div className='card p-6 mb-8'>
+            <h2 className='text-2xl font-bold mb-4'>Customer Growth</h2>
+
+            <ResponsiveContainer width='100%' height={300}>
+              <LineChart data={stats.customerGrowth}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='_id' />
+                <YAxis />
+                <Tooltip />
+                <Line type='monotone' dataKey='total' stroke='#10b981' />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
           {/* Recent Orders */}
           <Card className='p-3'>

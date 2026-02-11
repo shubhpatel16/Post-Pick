@@ -2,6 +2,7 @@ import asyncHandler from '../middleware/asyncHandler.js';
 import Order from '../models/orderModel.js';
 import User from '../models/userModel.js';
 import Product from '../models/productModel.js';
+import { Parser } from 'json2csv';
 
 // @desc    Get dashboard stats
 // @route   GET /api/admin/dashboard
@@ -41,6 +42,48 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   const paidOrders = await Order.countDocuments({ isPaid: true });
   const unpaidOrders = await Order.countDocuments({ isPaid: false });
 
+  const topSellingProducts = await Order.aggregate([
+    { $unwind: '$orderItems' },
+    {
+      $group: {
+        _id: '$orderItems.product',
+        name: { $first: '$orderItems.name' },
+        totalSold: { $sum: '$orderItems.qty' },
+        revenue: {
+          $sum: { $multiply: ['$orderItems.qty', '$orderItems.price'] },
+        },
+      },
+    },
+    { $sort: { totalSold: -1 } },
+    { $limit: 5 },
+  ]);
+
+  const deliveredOrders = await Order.countDocuments({ isDelivered: true });
+  //   const paidOrders = await Order.countDocuments({ isPaid: true });
+  //   const unpaidOrders = await Order.countDocuments({ isPaid: false });
+
+  const customerGrowth = await User.aggregate([
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        total: { $sum: 1 },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  const revenueHeatmap = await Order.aggregate([
+    {
+      $group: {
+        _id: {
+          month: { $month: '$createdAt' },
+          day: { $dayOfMonth: '$createdAt' },
+        },
+        total: { $sum: '$totalPrice' },
+      },
+    },
+  ]);
+
   res.json({
     totalOrders,
     totalRevenue,
@@ -51,7 +94,36 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     lowStockProducts,
     paidOrders,
     unpaidOrders,
+    topSellingProducts,
+    deliveredOrders,
+    customerGrowth,
+    revenueHeatmap,
   });
 });
 
-export { getDashboardStats };
+const exportSalesCSV = asyncHandler(async (req, res) => {
+    const orders = await Order.find({ isPaid: true }).populate(
+      'user',
+      'name email'
+    );
+
+    const fields = ['orderId', 'customer', 'email', 'totalPrice', 'createdAt'];
+
+    const data = orders.map((order) => ({
+      orderId: order._id,
+      customer: order.user?.name,
+      email: order.user?.email,
+      totalPrice: order.totalPrice,
+      createdAt: order.createdAt,
+    }));
+
+    const parser = new Parser({ fields });
+    const csv = parser.parse(data);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('sales-report.csv');
+    res.send(csv);
+  });
+
+export { getDashboardStats, exportSalesCSV };
+
