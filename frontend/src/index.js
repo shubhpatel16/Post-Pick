@@ -14,6 +14,7 @@ import {
 import { HelmetProvider } from 'react-helmet-async';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
+import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import CartScreen from './screens/CartScreen';
@@ -34,7 +35,6 @@ import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import './assets/styles/carousel.css';
 import WishlistScreen from './screens/WishlistScreen';
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -67,6 +67,7 @@ const router = createBrowserRouter(
       </Route>
       {/* Admin users */}
       <Route path='' element={<AdminRoute />}>
+        <Route path='/admin/dashboard' element={<AdminDashboardScreen />} />
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
         <Route path='/admin/productlist' element={<ProductListScreen />} />
         <Route

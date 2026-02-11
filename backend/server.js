@@ -10,6 +10,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const port = process.env.PORT || 5001;
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.get('/api/config/paypal', (req, res) =>
