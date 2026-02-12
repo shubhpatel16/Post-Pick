@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Row, Col, Card, Table } from 'react-bootstrap';
 import { useGetDashboardStatsQuery } from '../../slices/adminApiSlice';
 import Loader from '../../components/Loader';
@@ -18,8 +19,19 @@ import {
 } from 'recharts';
 import { Button } from 'react-bootstrap';
 
+
 const AdminDashboardScreen = () => {
-  const { data, isLoading, error } = useGetDashboardStatsQuery();
+  
+
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [filterStart, setFilterStart] = useState('');
+  const [filterEnd, setFilterEnd] = useState('');
+  const { data, isLoading, error } = useGetDashboardStatsQuery(
+    filterStart && filterEnd
+      ? { startDate: filterStart, endDate: filterEnd }
+      : {}
+  );
   const stats = data || {};
 
   const exportCSV = () => {
@@ -47,6 +59,38 @@ const AdminDashboardScreen = () => {
       >
         Download PDF Report
       </Button>
+
+      <div className='mb-4 d-flex gap-3 align-items-end'>
+        <div>
+          <label>Start Date</label>
+          <input
+            type='date'
+            className='form-control'
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label>End Date</label>
+          <input
+            type='date'
+            className='form-control'
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+
+        <button
+          className='btn btn-primary'
+          onClick={() => {
+            setFilterStart(startDate);
+            setFilterEnd(endDate);
+          }}
+        >
+          Apply
+        </button>
+      </div>
 
       {isLoading ? (
         <Loader />

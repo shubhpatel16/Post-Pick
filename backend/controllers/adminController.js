@@ -9,59 +9,76 @@ import PDFDocument from 'pdfkit';
 // @route   GET /api/admin/dashboard
 // @access  Private/Admin
 const getDashboardStats = asyncHandler(async (req, res) => {
-  const totalOrders = await Order.countDocuments();
+  const { startDate, endDate } = req.query;
 
-  const orders = await Order.find({});
+  // 🗓️ Date filter object
+  const dateFilter = {};
+
+  if (startDate && endDate) {
+    dateFilter.createdAt = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
+  }
+
+  // 📦 Orders with optional date filter
+  const totalOrders = await Order.countDocuments(dateFilter);
+
+  const orders = await Order.find(dateFilter);
   const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
 
   const totalUsers = await User.countDocuments();
   const totalProducts = await Product.countDocuments();
 
-  const recentOrders = await Order.find({})
+  const recentOrders = await Order.find(dateFilter)
     .populate('user', 'name')
     .sort({ createdAt: -1 })
     .limit(5);
 
-  // 📊 Monthly revenue aggregation
+  // 📊 Monthly revenue
   const monthlyRevenue = await Order.aggregate([
+    { $match: dateFilter },
     {
       $group: {
         _id: { $month: '$createdAt' },
         total: { $sum: '$totalPrice' },
-        count: { $sum: 1 },
       },
     },
     { $sort: { _id: 1 } },
   ]);
 
-  // 📦 Low stock products
   const lowStockProducts = await Product.find({
     countInStock: { $lte: 5 },
   }).select('name countInStock');
 
-  // 💳 Paid vs Unpaid
-  const paidOrders = await Order.countDocuments({ isPaid: true });
-  const unpaidOrders = await Order.countDocuments({ isPaid: false });
+  const paidOrders = await Order.countDocuments({
+    ...dateFilter,
+    isPaid: true,
+  });
+
+  const unpaidOrders = await Order.countDocuments({
+    ...dateFilter,
+    isPaid: false,
+  });
+
+  const deliveredOrders = await Order.countDocuments({
+    ...dateFilter,
+    isDelivered: true,
+  });
 
   const topSellingProducts = await Order.aggregate([
+    { $match: dateFilter },
     { $unwind: '$orderItems' },
     {
       $group: {
         _id: '$orderItems.product',
         name: { $first: '$orderItems.name' },
         totalSold: { $sum: '$orderItems.qty' },
-        revenue: {
-          $sum: { $multiply: ['$orderItems.qty', '$orderItems.price'] },
-        },
       },
     },
     { $sort: { totalSold: -1 } },
     { $limit: 5 },
   ]);
-
-  const deliveredOrders = await Order.countDocuments({ isDelivered: true });
-  //   const paidOrders = await Order.countDocuments({ isPaid: true });
-  //   const unpaidOrders = await Order.countDocuments({ isPaid: false });
 
   const customerGrowth = await User.aggregate([
     {
@@ -71,18 +88,6 @@ const getDashboardStats = asyncHandler(async (req, res) => {
       },
     },
     { $sort: { _id: 1 } },
-  ]);
-
-  const revenueHeatmap = await Order.aggregate([
-    {
-      $group: {
-        _id: {
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
-        },
-        total: { $sum: '$totalPrice' },
-      },
-    },
   ]);
 
   res.json({
@@ -95,10 +100,9 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     lowStockProducts,
     paidOrders,
     unpaidOrders,
-    topSellingProducts,
     deliveredOrders,
+    topSellingProducts,
     customerGrowth,
-    revenueHeatmap,
   });
 });
 
