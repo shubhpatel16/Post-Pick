@@ -3,6 +3,7 @@ import Order from '../models/orderModel.js';
 import User from '../models/userModel.js';
 import Product from '../models/productModel.js';
 import { Parser } from 'json2csv';
+import PDFDocument from 'pdfkit';
 
 // @desc    Get dashboard stats
 // @route   GET /api/admin/dashboard
@@ -102,28 +103,57 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 });
 
 const exportSalesCSV = asyncHandler(async (req, res) => {
-    const orders = await Order.find({ isPaid: true }).populate(
-      'user',
-      'name email'
-    );
+  const orders = await Order.find({ isPaid: true }).populate(
+    'user',
+    'name email'
+  );
 
-    const fields = ['orderId', 'customer', 'email', 'totalPrice', 'createdAt'];
+  const fields = ['orderId', 'customer', 'email', 'totalPrice', 'createdAt'];
 
-    const data = orders.map((order) => ({
-      orderId: order._id,
-      customer: order.user?.name,
-      email: order.user?.email,
-      totalPrice: order.totalPrice,
-      createdAt: order.createdAt,
-    }));
+  const data = orders.map((order) => ({
+    orderId: order._id,
+    customer: order.user?.name,
+    email: order.user?.email,
+    totalPrice: order.totalPrice,
+    createdAt: order.createdAt,
+  }));
 
-    const parser = new Parser({ fields });
-    const csv = parser.parse(data);
+  const parser = new Parser({ fields });
+  const csv = parser.parse(data);
 
-    res.header('Content-Type', 'text/csv');
-    res.attachment('sales-report.csv');
-    res.send(csv);
+  res.header('Content-Type', 'text/csv');
+  res.attachment('sales-report.csv');
+  res.send(csv);
+});
+
+const exportSalesPDF = asyncHandler(async (req, res) => {
+  const orders = await Order.find({});
+
+  const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+
+  const doc = new PDFDocument();
+
+  // 🔴 THIS PART IS CRITICAL
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="sales-report.pdf"'
+  );
+
+  doc.pipe(res);
+
+  doc.fontSize(20).text('Post&Pick Sales Report', { align: 'center' });
+  doc.moveDown();
+
+  doc.fontSize(14).text(`Total Orders: ${orders.length}`);
+  doc.text(`Total Revenue: ₹${totalRevenue}`);
+  doc.moveDown();
+
+  orders.forEach((order, index) => {
+    doc.text(`${index + 1}. Order ID: ${order._id} | ₹${order.totalPrice}`);
   });
 
-export { getDashboardStats, exportSalesCSV };
+  doc.end();
+});
 
+export { getDashboardStats, exportSalesCSV, exportSalesPDF };

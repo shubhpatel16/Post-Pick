@@ -39,6 +39,15 @@ const AdminDashboardScreen = () => {
         Export Sales CSV
       </Button>
 
+      <Button
+        className='mb-3 ms-3'
+        onClick={() =>
+          window.open('http://localhost:5001/api/admin/export-pdf', '_blank')
+        }
+      >
+        Download PDF Report
+      </Button>
+
       {isLoading ? (
         <Loader />
       ) : error ? (
