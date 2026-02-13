@@ -90,6 +90,100 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     { $sort: { _id: 1 } },
   ]);
 
+  let revenueComparison = null;
+
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+    const prevStart = new Date(start);
+    prevStart.setDate(prevStart.getDate() - diffDays);
+
+    const prevEnd = new Date(start);
+    prevEnd.setDate(prevEnd.getDate() - 1);
+
+    const prevOrders = await Order.find({
+      createdAt: { $gte: prevStart, $lte: prevEnd },
+    });
+
+    const prevRevenue = prevOrders.reduce(
+      (acc, order) => acc + order.totalPrice,
+      0
+    );
+
+    revenueComparison = {
+      previousRevenue: prevRevenue,
+      currentRevenue: totalRevenue,
+      growth:
+        prevRevenue > 0
+          ? (((totalRevenue - prevRevenue) / prevRevenue) * 100).toFixed(2)
+          : 0,
+    };
+  }
+
+  const vipCustomers = await Order.aggregate([
+    {
+      $group: {
+        _id: '$user',
+        totalSpent: { $sum: '$totalPrice' },
+        totalOrders: { $sum: 1 },
+      },
+    },
+    { $sort: { totalSpent: -1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'userInfo',
+      },
+    },
+    { $unwind: '$userInfo' },
+    {
+      $project: {
+        _id: 1,
+        name: '$userInfo.name',
+        email: '$userInfo.email',
+        totalSpent: 1,
+        totalOrders: 1,
+      },
+    },
+  ]);
+
+  // 💰 Revenue by Category
+  const revenueByCategory = await Order.aggregate([
+    { $match: dateFilter }, // respect date filter
+
+    { $unwind: '$orderItems' },
+
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orderItems.product',
+        foreignField: '_id',
+        as: 'productData',
+      },
+    },
+
+    { $unwind: '$productData' },
+
+    {
+      $group: {
+        _id: '$productData.category',
+        revenue: {
+          $sum: {
+            $multiply: ['$orderItems.qty', '$orderItems.price'],
+          },
+        },
+      },
+    },
+
+    { $sort: { revenue: -1 } },
+  ]);
+
   res.json({
     totalOrders,
     totalRevenue,
@@ -103,6 +197,9 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     deliveredOrders,
     topSellingProducts,
     customerGrowth,
+    revenueComparison,
+    vipCustomers,
+    revenueByCategory,
   });
 });
 

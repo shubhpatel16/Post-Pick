@@ -19,10 +19,7 @@ import {
 } from 'recharts';
 import { Button } from 'react-bootstrap';
 
-
 const AdminDashboardScreen = () => {
-  
-
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [filterStart, setFilterStart] = useState('');
@@ -32,6 +29,7 @@ const AdminDashboardScreen = () => {
       ? { startDate: filterStart, endDate: filterEnd }
       : {}
   );
+  
   const stats = data || {};
 
   const exportCSV = () => {
@@ -146,6 +144,17 @@ const AdminDashboardScreen = () => {
             </ResponsiveContainer>
           </Card>
 
+          {data.revenueComparison && (
+            <div className='card p-3 mt-3'>
+              <h5>Revenue Growth</h5>
+              <p>Previous: ₹{data.revenueComparison.previousRevenue}</p>
+              <p>
+                Growth: {data.revenueComparison.growth}%
+                {data.revenueComparison.growth > 0 ? ' 📈' : ' 📉'}
+              </p>
+            </div>
+          )}
+
           {/* 📦 Low Stock Alert */}
           <Card className='p-3 mb-4'>
             <h4>Low Stock Products</h4>
@@ -185,6 +194,23 @@ const AdminDashboardScreen = () => {
                 <Bar dataKey='totalSold' fill='#6366f1' />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+
+          <div className='card p-4 mt-4'>
+            <h4 className='mb-3'>Revenue by Category</h4>
+
+            {data?.revenueByCategory?.length > 0 ? (
+              <ResponsiveContainer width='100%' height={300}>
+                <BarChart data={data.revenueByCategory}>
+                  <XAxis dataKey='_id' />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey='revenue' fill='#007bff' />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>No revenue data available</p>
+            )}
           </div>
 
           {/* Order Status Distribution */}
@@ -260,6 +286,35 @@ const AdminDashboardScreen = () => {
               </Table>
             )}
           </Card>
+
+          <div className='card p-4 mt-4'>
+            <h4>Top VIP Customers</h4>
+
+            {data.vipCustomers?.length === 0 ? (
+              <p>No VIP customers yet</p>
+            ) : (
+              <table className='table'>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Orders</th>
+                    <th>Total Spent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.vipCustomers.map((customer) => (
+                    <tr key={customer._id}>
+                      <td>{customer.name}</td>
+                      <td>{customer.email}</td>
+                      <td>{customer.totalOrders}</td>
+                      <td>₹{customer.totalSpent.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </>
       )}
     </>
