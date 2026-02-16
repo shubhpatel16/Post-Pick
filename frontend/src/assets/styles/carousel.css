@@ -1,9 +1,130 @@
+/* ============================= */
+/* PREMIUM HERO CAROUSEL */
+/* ============================= */
+
 .carousel-item {
-  height: 420px; /* FIXED HEIGHT */
+  height: 500px;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Image styling */
 .carousel-item img {
   height: 100%;
   width: 100%;
-  object-fit: cover; /* MAGIC LINE */
+  object-fit: cover;
+  transition: transform 6s ease;
+}
+
+/* Slow cinematic zoom effect */
+.carousel-item:hover img {
+  transform: scale(1.08);
+}
+
+/* Dark overlay for premium look */
+.carousel-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.6)
+  );
+}
+
+/* Caption styling */
+.carousel-caption {
+  position: absolute;
+  bottom: 60px;
+  left: 8%;
+  right: 8%;
+  text-align: left;
+  z-index: 2;
+}
+
+.carousel-caption h2 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.carousel-caption p {
+  font-size: 1rem;
+  color: #cccccc;
+  margin-top: 10px;
+}
+
+/* Remove default background */
+.carousel-caption {
+  background: transparent !important;
+}
+
+/* Controls styling */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+  opacity: 1;
+}
+
+/* Indicators */
+.carousel-indicators button {
+  background-color: #ffffff !important;
+  opacity: 0.5;
+}
+
+.carousel-indicators .active {
+  opacity: 1;
+}
+
+/* ============================= */
+/* MOBILE OPTIMIZATION */
+/* ============================= */
+
+@media (max-width: 992px) {
+  .carousel-item {
+    height: 400px;
+  }
+
+  .carousel-caption h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-item {
+    height: 320px;
+  }
+
+  .carousel-caption {
+    bottom: 30px;
+    left: 5%;
+    right: 5%;
+  }
+
+  .carousel-caption h2 {
+    font-size: 1.5rem;
+  }
+
+  .carousel-caption p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-item {
+    height: 260px;
+  }
+
+  .carousel-caption h2 {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
 }

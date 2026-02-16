@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
-import { FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaShoppingCart, FaUser, FaHeart } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
@@ -7,7 +7,8 @@ import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
 import logo from '../assets/logo.png';
 import { resetCart } from '../slices/cartSlice';
-import { FaHeart } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaMoon, FaSun } from 'react-icons/fa';
 
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -15,15 +16,12 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      // NOTE: here we need to reset cart state for when a user logs out so the next
-      // user doesn't inherit the previous users cart and shipping
       dispatch(resetCart());
       navigate('/login');
     } catch (err) {
@@ -31,18 +29,51 @@ const Header = () => {
     }
   };
 
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <header>
-      <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
+      <Navbar
+        expand='lg'
+        fixed='top'
+        className='premium-navbar'
+        collapseOnSelect
+        variant='dark'
+      >
         <Container>
-          <Navbar.Brand as={Link} to='/'>
-            <img src={logo} alt='Post&Pick' />
-            Post&Pick
+          {/* Brand */}
+          <Navbar.Brand as={Link} to='/' className='brand-logo'>
+            <img
+              src={logo}
+              alt='Post&Pick'
+              style={{ height: '35px', marginRight: '8px' }}
+            />
+            POST & PICK
           </Navbar.Brand>
+
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
+
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto'>
-              <NavDropdown title='Categories' id='categories'>
+            <Nav className='ms-auto align-items-center'>
+              {/* Categories */}
+              <NavDropdown
+                title='Categories'
+                id='categories'
+                className='nav-dropdown-custom'
+              >
                 <NavDropdown.Item as={Link} to='/category/men'>
                   Men
                 </NavDropdown.Item>
@@ -54,39 +85,61 @@ const Header = () => {
                 </NavDropdown.Item>
               </NavDropdown>
 
-              <SearchBox />
-              <Link to='/wishlist' className='nav-link'>
-                <FaHeart /> Wishlist
-              </Link>
+              {/* Search */}
+              <div className='mx-3'>
+                <SearchBox />
+              </div>
 
-              <Nav.Link as={Link} to='/cart'>
+              <Nav.Link onClick={toggleTheme} className='nav-link-custom'>
+                {theme === 'dark' ? <FaSun /> : <FaMoon />}
+              </Nav.Link>
+
+              {/* Wishlist */}
+              <Nav.Link as={Link} to='/wishlist' className='nav-link-custom'>
+                <FaHeart /> Wishlist
+              </Nav.Link>
+
+              {/* Cart */}
+              <Nav.Link
+                as={Link}
+                to='/cart'
+                className='nav-link-custom position-relative'
+              >
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (
-                  <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                  <Badge pill bg='light' text='dark' className='cart-badge'>
                     {cartItems.reduce((a, c) => a + c.qty, 0)}
                   </Badge>
                 )}
               </Nav.Link>
+
+              {/* User */}
               {userInfo ? (
-                <>
-                  <NavDropdown title={userInfo.name} id='username'>
-                    <NavDropdown.Item as={Link} to='/profile'>
-                      Profile
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
+                <NavDropdown
+                  title={userInfo.name}
+                  id='username'
+                  className='nav-dropdown-custom'
+                >
+                  <NavDropdown.Item as={Link} to='/profile'>
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
               ) : (
-                <Nav.Link as={Link} to='/login'>
+                <Nav.Link as={Link} to='/login' className='nav-link-custom'>
                   <FaUser /> Sign In
                 </Nav.Link>
               )}
 
-              {/* Admin Links */}
+              {/* Admin */}
               {userInfo && userInfo.isAdmin && (
-                <NavDropdown title='Admin' id='adminmenu'>
+                <NavDropdown
+                  title='Admin'
+                  id='adminmenu'
+                  className='nav-dropdown-custom'
+                >
                   <NavDropdown.Item as={Link} to='/admin/productlist'>
                     Products
                   </NavDropdown.Item>

@@ -1,47 +1,122 @@
+/* ============================= */
+/* THEME VARIABLES */
+/* ============================= */
+
+:root {
+  --bg-color: #000000;
+  --card-bg: #111111;
+  --text-color: #ffffff;
+  --secondary-text: #aaaaaa;
+  --border-color: #222222;
+  --btn-bg: #ffffff;
+  --btn-text: #000000;
+}
+
+body.light-theme {
+  --bg-color: #ffffff;
+  --card-bg: #f8f9fa;
+  --text-color: #000000;
+  --secondary-text: #555555;
+  --border-color: #dddddd;
+  --btn-bg: #000000;
+  --btn-text: #ffffff;
+}
+
+
+/* ============================= */
+/* GLOBAL THEME - PREMIUM BLACK */
+/* ============================= */
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: 0.3px;
+}
+
 main {
   min-height: 80vh;
 }
+
+a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #cccccc;
+}
+
+/* ============================= */
+/* RATING */
+/* ============================= */
 
 .rating span {
   margin: 0.1rem;
 }
 
 .rating svg {
-  color: #f8e825;
+  color: #ffffff;
 }
 
 .rating-text {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
   padding-left: 0.5rem;
+  color: #aaaaaa;
 }
 
+/* ============================= */
+/* PRODUCT TITLE */
+/* ============================= */
+
 .product-title {
-  height: 2.5em; /* Set a fixed height */
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis; /* Add ellipsis for long text */
-  white-space: nowrap; /* Prevent wrapping */
+  height: 2.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
+
+/* ============================= */
+/* TABLES (Admin + Orders) */
+/* ============================= */
 
 table td,
 table th {
   text-align: center;
+  background-color: #111111;
+  color: #ffffff;
+  border-color: #222222 !important;
 }
+
+/* ============================= */
+/* REVIEW SECTION */
+/* ============================= */
 
 .review {
   margin-top: 30px;
 }
 
 .review h2 {
-  font-size: 24px;
-  background: #f4f4f4;
-  padding: 10px;
-  border: 1px solid #ddd;
+  font-size: 22px;
+  background: var(--card-bg);
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  color: var(--text-color);
 }
+
 
 .review button {
   margin-top: 10px;
 }
+
+/* ============================= */
+/* CAROUSEL */
+/* ============================= */
 
 .carousel-caption {
   position: absolute;
@@ -49,37 +124,98 @@ table th {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
 }
 
+/* ============================= */
+/* PRODUCT CARD IMAGE WRAPPER */
+/* ============================= */
+
 .product-image-wrapper {
-  height: 250px;          /* FIXED HEIGHT */
+  height: 250px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
+  background-color: #111111;
+  border-bottom: 1px solid #222222;
+  transition: transform 0.4s ease;
 }
 
 .product-image-wrapper:hover img {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .product-image {
   object-fit: contain;
-  background-color: #f8f9fa;
+  background-color: #111111;
+  transition: transform 0.4s ease;
 }
 
+/* ============================= */
+/* CARD STYLING */
+/* ============================= */
+
+.card {
+ background-color: var(--card-bg);
+ border: 1px solid var(--border-color);
+  border-radius: 14px !important;
+  transition: all 0.3s ease;
+  color: var(--text-color) !important;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.05);
+}
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+
+.btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: none !important;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #dddddd !important;
+  transform: scale(1.05);
+}
+
+.btn-outline-light {
+  border-color: #444444 !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-light:hover {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* ============================= */
+/* FOOTER */
+/* ============================= */
+
 .footer {
-  background-color: #3f4b5b;
-  color: #ccc;
+  background-color: #000000;
+  color: #aaaaaa;
   margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid #222222;
 }
 
 .footer-title {
-  color: #fff;
+  color: #ffffff;
   font-weight: 600;
   margin-bottom: 1rem;
+  letter-spacing: 1px;
 }
 
 .footer-text {
@@ -99,27 +235,51 @@ table th {
 }
 
 .footer-links a {
-  color: #bbb;
-  text-decoration: none;
+  color: #aaaaaa;
   font-size: 0.9rem;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .footer-links a:hover {
-  color: #fff;
-  text-decoration: underline;
+  color: #ffffff;
+  padding-left: 5px;
 }
 
 .footer-divider {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .footer-bottom {
   font-size: 0.85rem;
-  color: #aaa;
+  color: #777777;
 }
 
+/* ============================= */
+/* MOBILE OPTIMIZATION */
+/* ============================= */
+
 @media (max-width: 768px) {
+
+  body {
+    font-size: 14px;
+  }
+
+  .card {
+    margin-bottom: 20px;
+  }
+
+  .product-image-wrapper {
+    height: 200px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  h1, h2 {
+    font-size: 1.5rem;
+  }
+
   .footer {
     text-align: center;
   }
@@ -133,49 +293,162 @@ table th {
   }
 }
 
-/* .footer {
-  background-color: #3F4B5B;
-  color: #ccc;
-  margin-top: 4rem;
+/* ============================= */
+/* PREMIUM NAVBAR */
+/* ============================= */
+
+.premium-navbar {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #222222;
+  padding: 15px 0;
 }
 
-.footer-title {
-  color: #fff;
-  font-weight: 600;
-  margin-bottom: 1rem;
+.brand-logo {
+  font-weight: 800;
+  letter-spacing: 3px;
+  font-size: 1.2rem;
+  color: #ffffff !important;
 }
 
-.footer-text {
-  font-size: 0.9rem;
-  line-height: 1.6;
+.nav-link-custom {
+  color: #ffffff !important;
+  font-weight: 500;
+  margin-left: 18px;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
-.footer-links {
-  list-style: none;
-  padding: 0;
+/* Underline animation */
+.nav-link-custom::after {
+  /* Apply underline to dropdown titles also */
+.navbar .dropdown-toggle {
+  position: relative;
+  transition: all 0.3s ease;
 }
 
-.footer-links li {
-  margin-bottom: 0.5rem;
+.navbar .dropdown-toggle::after {
+  border: none !important; /* remove default arrow underline effect */
 }
 
-.footer-links a {
-  color: #bbb;
-  text-decoration: none;
-  font-size: 0.9rem;
+.navbar .dropdown-toggle::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
 }
 
-.footer-links a:hover {
-  color: #fff;
-  text-decoration: underline;
+.navbar .dropdown-toggle:hover::before {
+  width: 100%;
 }
 
-.footer-divider {
-  border-color: #333;
 }
 
-.footer-bottom {
-  font-size: 0.85rem;
-  color: #aaa;
+.nav-link-custom:hover::after {
+  width: 100%;
 }
- */
+
+/* Dropdown */
+.nav-dropdown-custom .dropdown-menu {
+  background-color: #111111;
+  border: 1px solid #222222;
+}
+
+.nav-dropdown-custom .dropdown-item {
+  color: #ffffff;
+}
+
+.nav-dropdown-custom .dropdown-item:hover {
+  background-color: #222222;
+}
+
+/* Cart badge animation */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  font-size: 0.7rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Remove default toggle border */
+.navbar-toggler {
+  border: none !important;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+}
+
+.navbar .nav-link,
+.navbar .dropdown-toggle {
+  color: #ffffff !important;
+}
+
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background-color: #000000;
+    padding: 15px;
+  }
+}
+
+/* ============================= */
+/* LIST GROUP (VIP CUSTOMERS) */
+/* ============================= */
+
+.list-group-item {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+
+/* ============================= */
+/* GLOBAL TABLE THEME CONTROL */
+/* ============================= */
+
+.table {
+  background-color: transparent !important;
+  color: var(--text-color) !important;
+}
+
+.table thead {
+  background-color: var(--card-bg) !important;
+}
+
+.table thead th {
+  color: var(--text-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table tbody tr {
+  background-color: var(--card-bg) !important;
+}
+
+.table td,
+.table th {
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Hover effect */
+.table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* Light theme hover adjustment */
+body.light-theme .table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
