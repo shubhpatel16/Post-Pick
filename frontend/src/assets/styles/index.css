@@ -28,6 +28,7 @@ body.light-theme {
 /* ============================= */
 
 body {
+  padding-top: 90px;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -321,14 +322,14 @@ table th {
 
 /* Underline animation */
 .nav-link-custom::after {
-  /* Apply underline to dropdown titles also */
+ 
 .navbar .dropdown-toggle {
   position: relative;
   transition: all 0.3s ease;
 }
 
 .navbar .dropdown-toggle::after {
-  border: none !important; /* remove default arrow underline effect */
+  border: none !important; 
 }
 
 .navbar .dropdown-toggle::before {
