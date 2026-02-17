@@ -29,6 +29,7 @@ const WishlistScreen = () => {
     return (
       <>
         <Meta title='Wishlist' />
+         <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
         <Message>
           Your wishlist is empty.
           <Link to='/' className='btn btn-light ms-2'>
@@ -42,7 +43,7 @@ const WishlistScreen = () => {
   return (
     <>
       <Meta title='Wishlist' />
-      <h1>My Wishlist</h1>
+       <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
 
       {isLoading ? (
         <Loader />

@@ -4,6 +4,11 @@ import { protect } from '../middleware/authMiddleware.js';
 import User from '../models/userModel.js';
 
 router.put('/:productId', protect, async (req, res) => {
+  if (!req.user) {
+  res.status(401);
+  throw new Error('Not authorized, user missing');
+}
+
   const user = await User.findById(req.user._id);
 
   if (!user) {
