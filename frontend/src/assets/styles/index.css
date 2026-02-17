@@ -40,10 +40,15 @@ main {
 }
 
 a {
-  color: #ffffff;
+  color: var(--text-color);
   text-decoration: none;
   transition: all 0.3s ease;
 }
+
+a:hover {
+  opacity: 0.8;
+}
+
 
 a:hover {
   color: #cccccc;

@@ -74,10 +74,10 @@ const LoginScreen = () => {
       </Form>
 
       <Row className='py-3'>
-        <Col>
-          New Customer?{' '}
-          <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
-            Register
+        <Col className='d-flex align-items-center gap-3'>
+          <span>New Customer?</span>
+          <Link to='/register'>
+            <Button variant='primary'>Register</Button>
           </Link>
         </Col>
       </Row>
