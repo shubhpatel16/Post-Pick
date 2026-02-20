@@ -14,6 +14,8 @@ import {
 import { protect, admin } from '../middleware/authMiddleware.js';
 import checkObjectId from '../middleware/checkObjectId.js';
 import Product from '../models/productModel.js';
+import { generateDescription } from '../controllers/aiController.js';
+
 
 router.route('/').get(getProducts).post(protect, admin, createProduct);
 router.get('/top', getTopProducts);
@@ -29,7 +31,7 @@ router.post('/recently-viewed', async (req, res) => {
 });
 router.get('/:id/recommendations', getProductRecommendations);
 router.route('/:id/reviews').post(protect, checkObjectId, createProductReview);
-
+router.post('/generate-description', protect, admin, generateDescription);
 router
   .route('/:id')
   .get(checkObjectId, getProductById)

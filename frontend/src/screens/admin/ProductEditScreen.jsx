@@ -10,6 +10,7 @@ import {
   useUpdateProductMutation,
   useUploadProductImageMutation,
 } from '../../slices/productsApiSlice';
+import axios from 'axios';
 
 const ProductEditScreen = () => {
   const { id: productId } = useParams();
@@ -79,6 +80,25 @@ const ProductEditScreen = () => {
       setImage(res.image);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const generateAIDescription = async () => {
+    try {
+      setAiLoading(true);
+
+      const { data } = await axios.post('/api/products/generate-description', {
+        name,
+        category,
+      });
+
+      setDescription(data.description);
+    } catch (err) {
+      toast.error('AI failed');
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -165,11 +185,20 @@ const ProductEditScreen = () => {
             <Form.Group controlId='description'>
               <Form.Label>Description</Form.Label>
               <Form.Control
-                type='text'
+                as='textarea'
+                rows={4}
                 placeholder='Enter description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               ></Form.Control>
+              <Button
+                variant='secondary'
+                className='mt-2'
+                onClick={generateAIDescription}
+                disabled={aiLoading}
+              >
+                {aiLoading ? 'Generating...' : 'Generate AI Description'}
+              </Button>
             </Form.Group>
 
             <Button
