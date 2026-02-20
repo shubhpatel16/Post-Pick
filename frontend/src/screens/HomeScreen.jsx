@@ -11,6 +11,7 @@ import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
 import { useGetTrendingQuery } from '../slices/productsApiSlice';
+import { useLocation } from 'react-router-dom';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -31,6 +32,9 @@ const HomeScreen = () => {
   });
 
   const { data: trending } = useGetTrendingQuery();
+
+  const location = useLocation();
+  const smartResults = location.state?.smartResults;
 
   return (
     <>
@@ -123,7 +127,7 @@ const HomeScreen = () => {
           )}
 
           <Row>
-            {data.products.map((product) => (
+            {(smartResults || data.products).map((product) => (
               <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
                 <Product product={product} />
               </Col>

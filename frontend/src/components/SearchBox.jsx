@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const SearchBox = () => {
   const navigate = useNavigate();
@@ -10,13 +11,33 @@ const SearchBox = () => {
   // FIX: uncontrolled input - urlKeyword may be undefined
   const [keyword, setKeyword] = useState(urlKeyword || '');
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    if (keyword) {
-      navigate(`/search/${keyword.trim()}`);
-      setKeyword('');
-    } else {
+
+    if (!keyword.trim()) {
       navigate('/');
+      return;
+    }
+
+    try {
+      const { data } = await axios.post('/api/search/smart-search', {
+        query: keyword,
+      });
+
+      // If AI returns results → use AI results
+      if (data && data.length > 0) {
+        navigate('/', { state: { smartResults: data } });
+      } else {
+        // fallback to normal search
+        navigate(`/search/${keyword.trim()}`);
+      }
+
+      setKeyword('');
+    } catch (error) {
+      console.error(error);
+
+      // If AI fails → fallback to normal search
+      navigate(`/search/${keyword.trim()}`);
     }
   };
 
