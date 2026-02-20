@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,9 +21,21 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Meta from '../components/Meta';
 import { addToCart } from '../slices/cartSlice';
+import { useGetRecommendationsQuery } from '../slices/productsApiSlice';
+import Product from '../components/Product';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
+
+  useEffect(() => {
+    const viewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
+
+    if (!viewed.includes(productId)) {
+      viewed.push(productId);
+    }
+
+    localStorage.setItem('recentlyViewed', JSON.stringify(viewed));
+  }, [productId]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,6 +76,8 @@ const ProductScreen = () => {
       toast.error(err?.data?.message || err.error);
     }
   };
+
+  const { data: recommendations } = useGetRecommendationsQuery(productId);
 
   return (
     <>
@@ -158,6 +172,7 @@ const ProductScreen = () => {
               </Card>
             </Col>
           </Row>
+
           <Row className='review'>
             <Col md={6}>
               <h2>Reviews</h2>
@@ -221,6 +236,19 @@ const ProductScreen = () => {
               </ListGroup>
             </Col>
           </Row>
+
+          {recommendations && recommendations.length > 0 && (
+            <>
+              <h3 className='mt-5'>Recommended For You</h3>
+              <Row>
+                {recommendations.map((item) => (
+                  <Col key={item._id} sm={12} md={6} lg={3}>
+                    <Product product={item} />
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
         </>
       )}
     </>

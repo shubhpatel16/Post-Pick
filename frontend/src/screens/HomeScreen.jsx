@@ -10,6 +10,7 @@ import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
+import { useGetTrendingQuery } from '../slices/productsApiSlice';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const HomeScreen = () => {
     maxPrice,
     sort,
   });
+
+  const { data: trending } = useGetTrendingQuery();
 
   return (
     <>
@@ -103,6 +106,21 @@ const HomeScreen = () => {
         <>
           <Meta />
           <h1>Latest Products</h1>
+
+          {/* ========== TRENDING NOW SECTION ========== */}
+          {trending && trending.length > 0 && (
+            <>
+              <h2 className='mt-4 mb-3'>🔥 Trending Now</h2>
+              <Row>
+                {trending.map((product) => (
+                  <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+              </Row>
+              <hr />
+            </>
+          )}
 
           <Row>
             {data.products.map((product) => (

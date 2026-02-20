@@ -206,6 +206,55 @@ const getTopProducts = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
+// @desc    Get product recommendations
+// @route   GET /api/products/:id/recommendations
+// @access  Public
+const getProductRecommendations = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  const products = await Product.find({
+    _id: { $ne: product._id },
+  });
+
+  const scoredProducts = products.map((item) => {
+    let score = 0;
+
+    // Same category
+    if (item.category === product.category) score += 40;
+
+    // Same brand
+    if (item.brand === product.brand) score += 30;
+
+    // Price similarity
+    const priceDiff = Math.abs(item.price - product.price);
+    score += Math.max(0, 25 - priceDiff / 5);
+
+    // Rating boost
+    score += item.rating * 10;
+
+    return { ...item._doc, score };
+  });
+
+  scoredProducts.sort((a, b) => b.score - a.score);
+
+  res.json(scoredProducts.slice(0, 6));
+};
+
+const getTrendingProducts = async (req, res) => {
+  const products = await Product.find({})
+    .sort({ numReviews: -1, rating: -1 })
+    .limit(6);
+
+  res.json(products);
+};
+
+
+
 export {
   getProducts,
   getProductById,
@@ -214,4 +263,6 @@ export {
   deleteProduct,
   createProductReview,
   getTopProducts,
+  getProductRecommendations,
+  getTrendingProducts,
 };
