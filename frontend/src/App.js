@@ -8,6 +8,7 @@ import { logout } from './slices/authSlice';
 import './assets/styles/carousel.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AIAssistant from './components/AIAssistant';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const App = () => {
         <Container>
           <Outlet />
         </Container>
+        <AIAssistant />
       </main>
       <Footer />
     </>

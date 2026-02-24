@@ -18,6 +18,7 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import adminRoutes from './routes/adminRoutes.js';
 import aiSearchRoutes from './routes/aiSearchRoutes.js';
+import aiChatRoutes from './routes/aiChatRoutes.js';
 
 const port = process.env.PORT || 5001;
 
@@ -36,6 +37,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/search', aiSearchRoutes);
+app.use('/api/ai', aiChatRoutes);
 
 app.get('/api/config/paypal', (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })

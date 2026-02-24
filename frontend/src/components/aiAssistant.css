@@ -1,0 +1,133 @@
+/* Floating Button */
+.ai-floating-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 9999;
+}
+
+.ai-circle-btn {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 22px;
+  background: linear-gradient(135deg, #000, #444);
+  border: none;
+  transition: 0.3s;
+}
+
+.ai-circle-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Chat Box */
+.ai-chat-box {
+  position: fixed;
+  bottom: 95px;
+  right: 25px;
+  width: 360px;
+  height: 500px;
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+  z-index: 9999;
+}
+
+/* Dark Mode Support */
+body:not(.light-theme) .ai-chat-box {
+  background: rgba(20, 20, 20, 0.95);
+  color: #fff;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.ai-header {
+  padding: 12px;
+  font-weight: bold;
+  background: #000;
+  color: #fff;
+}
+
+.ai-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+/* Message Bubbles */
+.ai-message {
+  margin-bottom: 12px;
+  display: flex;
+}
+
+.ai-message.user {
+  justify-content: flex-end;
+}
+
+.ai-message.bot {
+  justify-content: flex-start;
+}
+
+.ai-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+}
+
+/* User bubble */
+.ai-message.user .ai-bubble {
+  background: #007bff;
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+
+/* Bot bubble */
+.ai-message.bot .ai-bubble {
+  background: #e9ecef;
+  color: #000;
+  border-bottom-left-radius: 5px;
+}
+
+/* Dark Mode Bot Bubble */
+body:not(.light-theme) .ai-message.bot .ai-bubble {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.ai-product {
+  margin-top: 8px;
+  padding: 6px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+body:not(.light-theme) .ai-product {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Input */
+.ai-input {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+body:not(.light-theme) .ai-input {
+  border-top: 1px solid #444;
+}
