@@ -46,7 +46,14 @@ export const smartSearch = async (req, res) => {
     const filter = {};
 
     if (extracted.keyword) {
-      filter.name = { $regex: extracted.keyword, $options: 'i' };
+      const words = extracted.keyword
+        .toLowerCase()
+        .split(' ')
+        .filter((word) => word.length > 2); 
+
+      filter.$or = words.map((word) => ({
+        name: { $regex: word, $options: 'i' },
+      }));
     }
 
     if (extracted.category) {
@@ -65,7 +72,55 @@ export const smartSearch = async (req, res) => {
 
     const products = await Product.find(filter);
 
-    res.json(products);
+    if (products.length === 0) {
+      return res.json([]);
+    }
+
+    // Send minimal product info to AI
+    const productData = products.map((p) => ({
+      id: p._id,
+      name: p.name,
+      description: p.description,
+      category: p.category,
+      price: p.price,
+      rating: p.rating,
+    }));
+
+    const rankingResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are an AI ranking engine. Rank products by relevance to the user query. Return ONLY a JSON array of product IDs in best-to-worst order.',
+        },
+        {
+          role: 'user',
+          content: `
+User Query: ${query}
+
+Products:
+${JSON.stringify(productData)}
+      `,
+        },
+      ],
+      temperature: 0.2,
+    });
+
+    let rankedContent = rankingResponse.choices[0].message.content;
+
+    rankedContent = rankedContent.replace(/```json/g, '');
+    rankedContent = rankedContent.replace(/```/g, '');
+    rankedContent = rankedContent.trim();
+
+    const rankedIds = JSON.parse(rankedContent);
+
+    // Reorder products according to AI ranking
+    const rankedProducts = rankedIds
+      .map((id) => products.find((p) => p._id.toString() === id))
+      .filter(Boolean);
+
+    res.json(rankedProducts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
