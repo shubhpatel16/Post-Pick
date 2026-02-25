@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,11 +13,22 @@ import {
 import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
+import { useLocation } from 'react-router-dom';
+import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 
 const CartScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+
+  const productId = params.get('productId');
+  const qty = Number(params.get('qty')) || 1;
+
+  const { data: product } = useGetProductDetailsQuery(productId, {
+    skip: !productId,
+  });
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
@@ -33,6 +45,12 @@ const CartScreen = () => {
   const checkoutHandler = () => {
     navigate('/login?redirect=/shipping');
   };
+
+  useEffect(() => {
+    if (productId && product) {
+      dispatch(addToCart({ ...product, qty }));
+    }
+  }, [dispatch, productId, product, qty]);
 
   return (
     <Row>

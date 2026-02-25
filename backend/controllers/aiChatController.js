@@ -3,7 +3,7 @@ import Product from '../models/productModel.js';
 
 export const chatAssistant = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history } = req.body;
 
     if (!message) {
       return res.status(400).json({ message: 'Message required' });
@@ -28,6 +28,22 @@ export const chatAssistant = async (req, res) => {
         },
       ],
       temperature: 0,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a smart e-commerce shopping assistant. Recommend products and ask follow-up questions if needed.',
+        },
+        ...(history || []),
+        {
+          role: 'user',
+          content: message,
+        },
+      ],
     });
 
     let content = extraction.choices[0].message.content;
