@@ -25,6 +25,7 @@ const port = process.env.PORT || 5001;
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,7 +45,7 @@ app.get('/api/config/paypal', (req, res) =>
 );
 
 if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve();
+  // const __dirname = path.resolve();
 
   app.use(express.static(path.join(__dirname, '/frontend/build')));
 
