@@ -45,16 +45,15 @@ app.get('/api/config/paypal', (req, res) =>
 );
 
 if (process.env.NODE_ENV === 'production') {
-  // const __dirname = path.resolve();
+  const rootDir = path.resolve(__dirname, '..');
 
-  app.use(express.static(path.join(__dirname, '/frontend/build')));
+  app.use(express.static(path.join(rootDir, 'frontend', 'build')));
 
-  // Only send index.html for non-API routes
-  app.get('*', (req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  app.get('*', (req, res) => {
+    if (req.originalUrl.startsWith('/api')) return;
+    res.sendFile(
+      path.resolve(rootDir, 'frontend', 'build', 'index.html')
+    );
   });
 } else {
   const __dirname = path.resolve();
