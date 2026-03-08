@@ -18,6 +18,7 @@ import {
   Line,
 } from 'recharts';
 import { Button } from 'react-bootstrap';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const AdminDashboardScreen = () => {
   const [startDate, setStartDate] = useState('');
@@ -29,7 +30,7 @@ const AdminDashboardScreen = () => {
       ? { startDate: filterStart, endDate: filterEnd }
       : {}
   );
-  
+
   const stats = data || {};
 
   const exportCSV = () => {
@@ -110,7 +111,7 @@ const AdminDashboardScreen = () => {
             <Col md={3}>
               <Card className='p-3 text-center'>
                 <h6>Total Revenue</h6>
-                <h3>${data.totalRevenue.toFixed(2)}</h3>
+                <h3>{formatCurrency(data?.totalRevenue || 0)}</h3>
               </Card>
             </Col>
 
@@ -277,7 +278,7 @@ const AdminDashboardScreen = () => {
                     <tr key={order._id}>
                       <td>{order._id.slice(-6)}</td>
                       <td>{order.user?.name}</td>
-                      <td>${order.totalPrice}</td>
+                      <td>{formatCurrency(order.totalPrice)}</td>
                       <td>{order.isPaid ? 'Yes' : 'No'}</td>
                       <td>{order.isDelivered ? 'Yes' : 'No'}</td>
                     </tr>

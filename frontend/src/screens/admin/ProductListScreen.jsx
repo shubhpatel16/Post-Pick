@@ -10,6 +10,7 @@ import {
   useCreateProductMutation,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const ProductListScreen = () => {
   const { pageNumber } = useParams();
@@ -83,7 +84,7 @@ const ProductListScreen = () => {
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
-                  <td>${product.price}</td>
+                  <td>{formatCurrency(product.price)}</td>
                   <td>{product.category}</td>
                   <td>{product.brand}</td>
                   <td>

@@ -12,9 +12,15 @@ import {
   useGetPaypalClientIdQuery,
   usePayOrderMutation,
 } from '../slices/ordersApiSlice';
+import { formatCurrency } from '../utils/formatCurrency';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import StripeCheckoutForm from '../components/StripeCheckoutForm';
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
+
+  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
   const {
     data: order,
@@ -166,7 +172,8 @@ const OrderScreen = () => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
+                          {item.qty} x {formatCurrency(item.price)} ={' '}
+                          {formatCurrency(item.qty * item.price)}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -185,25 +192,25 @@ const OrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${order.itemsPrice}</Col>
+                  <Col>{formatCurrency(order.itemsPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${order.shippingPrice}</Col>
+                  <Col>{formatCurrency(order.shippingPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${order.taxPrice}</Col>
+                  <Col>{formatCurrency(order.taxPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${order.totalPrice}</Col>
+                  <Col>{formatCurrency(order.totalPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               {!order.isPaid && (
@@ -215,20 +222,32 @@ const OrderScreen = () => {
                   ) : (
                     <div>
                       {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
-                      <Button
-                        style={{ marginBottom: '10px' }}
-                        onClick={onApproveTest}
-                      >
-                        Test Pay Order
-                      </Button>
+                      {order.paymentMethod === 'PayPal' && (
+                        <Button
+                          style={{ marginBottom: '10px' }}
+                          onClick={onApproveTest}
+                        >
+                          Test Pay Order
+                        </Button>
+                      )}
 
-                      <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        ></PayPalButtons>
-                      </div>
+                      {!order.isPaid && order.paymentMethod === 'PayPal' && (
+                        <div>
+                          <PayPalButtons
+                            createOrder={createOrder}
+                            onApprove={onApprove}
+                            onError={onError}
+                          ></PayPalButtons>
+                        </div>
+                      )}
+
+                      {!order.isPaid && order.paymentMethod === 'Stripe' && (
+                        <ListGroup.Item>
+                          <Elements stripe={stripePromise}>
+                            <StripeCheckoutForm order={order} />
+                          </Elements>
+                        </ListGroup.Item>
+                      )}
                     </div>
                   )}
                 </ListGroup.Item>

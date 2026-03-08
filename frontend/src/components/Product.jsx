@@ -6,6 +6,7 @@ import { Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { formatCurrency } from '../utils/formatCurrency';
 
 const Product = ({ product }) => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -60,7 +61,7 @@ const Product = ({ product }) => {
           />
         </Card.Text>
 
-        <Card.Text as='h3'>${product.price}</Card.Text>
+        <Card.Text as='h3'>{formatCurrency(product.price)}</Card.Text>
       </Card.Body>
     </Card>
   );
