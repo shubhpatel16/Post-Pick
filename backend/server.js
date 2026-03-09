@@ -20,6 +20,8 @@ import adminRoutes from './routes/adminRoutes.js';
 import aiSearchRoutes from './routes/aiSearchRoutes.js';
 import aiChatRoutes from './routes/aiChatRoutes.js';
 import stripeRoutes from './routes/stripeRoutes.js';
+import couponRoutes from "./routes/couponRoutes.js";
+import vipRoutes from "./routes/vipRoutes.js";
 
 const port = process.env.PORT || 5001;
 
@@ -41,6 +43,8 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/search', aiSearchRoutes);
 app.use('/api/ai', aiChatRoutes);
 app.use('/api/payments', stripeRoutes);
+app.use("/api/coupons", couponRoutes);
+app.use("/api/vip", vipRoutes);
 
 app.get('/api/config/paypal', (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
