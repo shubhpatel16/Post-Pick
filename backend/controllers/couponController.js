@@ -49,3 +49,65 @@ export const getCoupons = asyncHandler(async (req, res) => {
 
   res.json(coupons);
 });
+
+// @desc    Create coupon
+// @route   POST /api/coupons
+// @access  Admin
+export const createCoupon = asyncHandler(async (req, res) => {
+  const { code, discount, vipOnly, minOrderAmount, expiryDate } = req.body;
+
+  const couponExists = await Coupon.findOne({ code });
+
+  if (couponExists) {
+    res.status(400);
+    throw new Error('Coupon already exists');
+  }
+
+  const coupon = await Coupon.create({
+    code,
+    discount,
+    vipOnly,
+    minOrderAmount,
+    expiryDate,
+  });
+
+  res.status(201).json(coupon);
+});
+
+// @desc    Delete coupon
+// @route   DELETE /api/coupons/:id
+// @access  Admin
+export const deleteCoupon = asyncHandler(async (req, res) => {
+  const coupon = await Coupon.findById(req.params.id);
+
+  if (!coupon) {
+    res.status(404);
+    throw new Error('Coupon not found');
+  }
+
+  await coupon.deleteOne();
+
+  res.json({ message: 'Coupon removed' });
+});
+
+// @desc Update coupon
+// @route PUT /api/coupons/:id
+// @access Admin
+
+export const updateCoupon = asyncHandler(async (req, res) => {
+  const coupon = await Coupon.findById(req.params.id);
+
+  if (!coupon) {
+    res.status(404);
+    throw new Error("Coupon not found");
+  }
+
+  coupon.code = req.body.code || coupon.code;
+  coupon.discount = req.body.discount || coupon.discount;
+  coupon.minOrderAmount =
+    req.body.minOrderAmount || coupon.minOrderAmount;
+
+  const updatedCoupon = await coupon.save();
+
+  res.json(updatedCoupon);
+});
