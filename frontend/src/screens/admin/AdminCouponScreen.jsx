@@ -8,6 +8,7 @@ const AdminCouponScreen = () => {
   const [code, setCode] = useState('');
   const [discount, setDiscount] = useState('');
   const [minOrderAmount, setMinOrderAmount] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   const { userInfo } = useSelector((state) => state.auth);
   const [editingId, setEditingId] = useState(null);
 
@@ -32,7 +33,7 @@ const AdminCouponScreen = () => {
       if (editingId) {
         await axios.put(
           `/api/coupons/${editingId}`,
-          { code, discount, minOrderAmount },
+          { code, discount, minOrderAmount, expiryDate },
           {
             headers: {
               Authorization: `Bearer ${userInfo.token}`,
@@ -42,7 +43,7 @@ const AdminCouponScreen = () => {
       } else {
         await axios.post(
           '/api/coupons',
-          { code, discount, minOrderAmount },
+          { code, discount, minOrderAmount, expiryDate },
           {
             headers: {
               Authorization: `Bearer ${userInfo.token}`,
@@ -55,6 +56,7 @@ const AdminCouponScreen = () => {
       setCode('');
       setDiscount('');
       setMinOrderAmount('');
+      setExpiryDate('');
 
       fetchCoupons();
     } catch (error) {
@@ -96,6 +98,15 @@ const AdminCouponScreen = () => {
           />
         </Form.Group>
 
+        <Form.Group>
+          <Form.Label>Expiry Date</Form.Label>
+          <Form.Control
+            type='date'
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
+          />
+        </Form.Group>
+
         <Button onClick={saveCoupon}>
           {editingId ? 'Update Coupon' : 'Create Coupon'}
         </Button>
@@ -107,6 +118,7 @@ const AdminCouponScreen = () => {
             <th className='text-center'>Code</th>
             <th className='text-center'>Discount</th>
             <th className='text-center'>Min Order</th>
+            <th className='text-center'>Expiry</th>
             <th className='text-center'>Action</th>
           </tr>
         </thead>
@@ -119,6 +131,16 @@ const AdminCouponScreen = () => {
               <td className='text-center'>{coupon.discount}%</td>
 
               <td className='text-center'>₹{coupon.minOrderAmount}</td>
+
+              <td className='text-center'>
+                {coupon.expiryDate
+                  ? new Date(coupon.expiryDate).toLocaleDateString('en-IN', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                    })
+                  : 'No Expiry'}
+              </td>
 
               <td className='text-center'>
                 <Button

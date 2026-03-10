@@ -12,9 +12,25 @@ export const applyCoupon = asyncHandler(async (req, res) => {
     throw new Error('Invalid coupon');
   }
 
+  const usedCoupon = await Order.findOne({
+    user: req.user._id,
+    couponUsed: code,
+  });
+
+  if (usedCoupon) {
+    res.status(400);
+    throw new Error('You have already used this coupon');
+  }
+
   if (!coupon.isActive) {
     res.status(400);
     throw new Error('Coupon not active');
+  }
+
+  // Check coupon expiry
+  if (coupon.expiryDate && coupon.expiryDate < Date.now()) {
+    res.status(400);
+    throw new Error('Coupon has expired');
   }
 
   if (orderTotal < coupon.minOrderAmount) {
@@ -99,14 +115,16 @@ export const updateCoupon = asyncHandler(async (req, res) => {
 
   if (!coupon) {
     res.status(404);
-    throw new Error("Coupon not found");
+    throw new Error('Coupon not found');
   }
 
-  coupon.code = req.body.code || coupon.code;
-  coupon.discount = req.body.discount || coupon.discount;
-  coupon.minOrderAmount =
-    req.body.minOrderAmount || coupon.minOrderAmount;
+  coupon.code = req.body.code ?? coupon.code;
+  coupon.discount = req.body.discount ?? coupon.discount;
+  coupon.minOrderAmount = req.body.minOrderAmount ?? coupon.minOrderAmount;
+  coupon.expiryDate = req.body.expiryDate ?? coupon.expiryDate;
 
+  coupon.isActive =
+    req.body.isActive !== undefined ? req.body.isActive : coupon.isActive;
   const updatedCoupon = await coupon.save();
 
   res.json(updatedCoupon);

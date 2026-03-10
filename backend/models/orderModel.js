@@ -72,6 +72,10 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    couponUsed: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
