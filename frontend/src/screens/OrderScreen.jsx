@@ -83,12 +83,19 @@ const OrderScreen = () => {
     toast.error(err.message);
   }
 
+  
+
   function createOrder(data, actions) {
+    const usdAmount = (order.totalPrice / 95).toFixed(2);
+
     return actions.order
       .create({
         purchase_units: [
           {
-            amount: { value: order.totalPrice },
+            amount: {
+              currency_code: 'USD',
+              value: usdAmount,
+            },
           },
         ],
       })

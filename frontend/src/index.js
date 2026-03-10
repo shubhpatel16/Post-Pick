@@ -35,6 +35,7 @@ import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import './assets/styles/carousel.css';
 import WishlistScreen from './screens/WishlistScreen';
+import AdminCouponScreen from './screens/admin/AdminCouponScreen';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -70,6 +71,7 @@ const router = createBrowserRouter(
         <Route path='/admin/dashboard' element={<AdminDashboardScreen />} />
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
         <Route path='/admin/productlist' element={<ProductListScreen />} />
+        <Route path="/admin/coupons" element={<AdminCouponScreen />} />
         <Route
           path='/admin/productlist/:pageNumber'
           element={<ProductListScreen />}

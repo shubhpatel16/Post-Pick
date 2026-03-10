@@ -37,7 +37,7 @@ const StripeCheckoutForm = ({ order }) => {
 
     try {
       const { data } = await axios.post('/api/payments/create-payment-intent', {
-        amount: order.totalPrice,
+        amount: Math.round(order.totalPrice * 100),
       });
 
       const result = await stripe.confirmCardPayment(data.clientSecret, {
