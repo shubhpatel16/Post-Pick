@@ -65,8 +65,47 @@ const AdminCouponScreen = () => {
   };
 
   const deleteCoupon = async (id) => {
-    await axios.delete(`/api/coupons/${id}`);
+    if (!window.confirm('Are you sure you want to delete this coupon?')) {
+      return;
+    }
+
+    await axios.delete(`/api/coupons/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    });
+
     fetchCoupons();
+  };
+
+  const toggleCouponStatus = async (coupon) => {
+    if (
+      !window.confirm('Are you sure you want to change this coupon status?')
+    ) {
+      return;
+    }
+
+    try {
+      await axios.put(
+        `/api/coupons/${coupon._id}`,
+        {
+          code: coupon.code,
+          discount: coupon.discount,
+          minOrderAmount: coupon.minOrderAmount,
+          expiryDate: coupon.expiryDate,
+          isActive: !coupon.isActive,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+
+      fetchCoupons();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -119,6 +158,7 @@ const AdminCouponScreen = () => {
             <th className='text-center'>Discount</th>
             <th className='text-center'>Min Order</th>
             <th className='text-center'>Expiry</th>
+            <th className='text-center'>Status</th>
             <th className='text-center'>Action</th>
           </tr>
         </thead>
@@ -143,6 +183,27 @@ const AdminCouponScreen = () => {
               </td>
 
               <td className='text-center'>
+                {coupon.isActive ? (
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>
+                    Active
+                  </span>
+                ) : (
+                  <span style={{ color: 'red', fontWeight: 'bold' }}>
+                    Inactive
+                  </span>
+                )}
+              </td>
+
+              <td className='text-center'>
+                <Button
+                  variant={coupon.isActive ? 'secondary' : 'success'}
+                  size='sm'
+                  style={{ marginRight: '10px' }}
+                  onClick={() => toggleCouponStatus(coupon)}
+                >
+                  {coupon.isActive ? 'Inactive' : 'Active'}
+                </Button>
+
                 <Button
                   variant='warning'
                   size='sm'

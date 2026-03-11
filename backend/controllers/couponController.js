@@ -61,8 +61,7 @@ export const applyCoupon = asyncHandler(async (req, res) => {
 });
 
 export const getCoupons = asyncHandler(async (req, res) => {
-  const coupons = await Coupon.find({ isActive: true });
-
+  const coupons = await Coupon.find({});
   res.json(coupons);
 });
 
