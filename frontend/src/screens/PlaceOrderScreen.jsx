@@ -121,8 +121,10 @@ const PlaceOrderScreen = () => {
       setCouponCode(selectedCode);
       setDiscount(Number(data.discount));
       setCouponError('');
+      toast.success('Coupon applied successfully');
     } catch (error) {
       setCouponError(error.message);
+      toast.error(error.message || 'Invalid coupon');
     }
   };
 
@@ -220,7 +222,9 @@ const PlaceOrderScreen = () => {
                 </h6>
 
                 {coupons
-                  .filter((coupon) => !coupon.vipOnly || isVIP)
+                  .filter(
+                    (coupon) => coupon.isActive && (!coupon.vipOnly || isVIP)
+                  )
                   .map((coupon) => (
                     <Button
                       key={coupon._id}

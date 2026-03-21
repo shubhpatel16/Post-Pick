@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button, Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const AdminCouponScreen = () => {
   const [coupons, setCoupons] = useState([]);
@@ -11,6 +12,17 @@ const AdminCouponScreen = () => {
   const [expiryDate, setExpiryDate] = useState('');
   const { userInfo } = useSelector((state) => state.auth);
   const [editingId, setEditingId] = useState(null);
+  const totalCoupons = coupons.length;
+  const activeCoupons = coupons.filter((c) => c.isActive).length;
+  const inactiveCoupons = totalCoupons - activeCoupons;
+  const cardStyle = {
+    flex: 1,
+    padding: '15px',
+    borderRadius: '10px',
+    background: '#f8f9fa',
+    textAlign: 'center',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  };
 
   const fetchCoupons = async () => {
     const { data } = await axios.get('/api/coupons');
@@ -59,6 +71,7 @@ const AdminCouponScreen = () => {
       setExpiryDate('');
 
       fetchCoupons();
+      toast.success(editingId ? 'Coupon updated' : 'Coupon created');
     } catch (error) {
       console.log(error);
     }
@@ -74,6 +87,7 @@ const AdminCouponScreen = () => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     });
+    toast.success('Coupon deleted');
 
     fetchCoupons();
   };
@@ -103,6 +117,7 @@ const AdminCouponScreen = () => {
       );
 
       fetchCoupons();
+      toast.success('Coupon status updated');
     } catch (error) {
       console.log(error);
     }
@@ -111,6 +126,23 @@ const AdminCouponScreen = () => {
   return (
     <div>
       <h2>Coupon Management</h2>
+
+      <div style={{ display: 'flex', gap: '20px', margin: '20px 0' }}>
+        <div style={cardStyle}>
+          <h5>Total Coupons</h5>
+          <h3>{totalCoupons}</h3>
+        </div>
+
+        <div style={cardStyle}>
+          <h5>Active</h5>
+          <h3 style={{ color: 'green' }}>{activeCoupons}</h3>
+        </div>
+
+        <div style={cardStyle}>
+          <h5>Inactive</h5>
+          <h3 style={{ color: 'red' }}>{inactiveCoupons}</h3>
+        </div>
+      </div>
 
       <Form>
         <Form.Group>
@@ -151,7 +183,7 @@ const AdminCouponScreen = () => {
         </Button>
       </Form>
 
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th className='text-center'>Code</th>
@@ -173,53 +205,72 @@ const AdminCouponScreen = () => {
               <td className='text-center'>₹{coupon.minOrderAmount}</td>
 
               <td className='text-center'>
-                {coupon.expiryDate
-                  ? new Date(coupon.expiryDate).toLocaleDateString('en-IN', {
+                {coupon.expiryDate ? (
+                  new Date(coupon.expiryDate) < new Date() ? (
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>
+                      Expired
+                    </span>
+                  ) : (
+                    new Date(coupon.expiryDate).toLocaleDateString('en-IN', {
                       day: '2-digit',
                       month: 'short',
                       year: 'numeric',
                     })
-                  : 'No Expiry'}
-              </td>
-
-              <td className='text-center'>
-                {coupon.isActive ? (
-                  <span style={{ color: 'green', fontWeight: 'bold' }}>
-                    Active
-                  </span>
+                  )
                 ) : (
-                  <span style={{ color: 'red', fontWeight: 'bold' }}>
-                    Inactive
-                  </span>
+                  'No Expiry'
                 )}
               </td>
 
               <td className='text-center'>
-                <Button
-                  variant={coupon.isActive ? 'secondary' : 'success'}
-                  size='sm'
-                  style={{ marginRight: '10px' }}
-                  onClick={() => toggleCouponStatus(coupon)}
+                <span
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    backgroundColor: coupon.isActive ? '#d1fae5' : '#fee2e2',
+                    color: coupon.isActive ? '#065f46' : '#991b1b',
+                  }}
                 >
-                  {coupon.isActive ? 'Inactive' : 'Active'}
-                </Button>
+                  {coupon.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </td>
 
-                <Button
-                  variant='warning'
-                  size='sm'
-                  style={{ marginRight: '10px' }}
-                  onClick={() => editCoupon(coupon)}
+              <td className='text-center'>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    justifyContent: 'center',
+                  }}
                 >
-                  Edit
-                </Button>
+                  <Button
+                    variant={
+                      coupon.isActive ? 'outline-secondary' : 'outline-success'
+                    }
+                    size='sm'
+                    onClick={() => toggleCouponStatus(coupon)}
+                  >
+                    {coupon.isActive ? 'Deactivate' : 'Activate'}
+                  </Button>
 
-                <Button
-                  variant='danger'
-                  size='sm'
-                  onClick={() => deleteCoupon(coupon._id)}
-                >
-                  Delete
-                </Button>
+                  <Button
+                    variant='outline-warning'
+                    size='sm'
+                    onClick={() => editCoupon(coupon)}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    variant='outline-danger'
+                    size='sm'
+                    onClick={() => deleteCoupon(coupon._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
