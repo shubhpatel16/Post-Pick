@@ -10,10 +10,10 @@ import { Link } from 'react-router-dom';
 const WishlistScreen = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
+  const { wishlistItems } = useSelector((state) => state.wishlist);
+
   const wishlistIds =
-    userInfo?.wishlist && userInfo.wishlist.length > 0
-      ? userInfo.wishlist.join(',')
-      : null;
+    wishlistItems && wishlistItems.length > 0 ? wishlistItems.join(',') : null;
 
   // ✅ HOOK IS ALWAYS CALLED
   const { data, isLoading, error } = useGetProductsQuery(
@@ -29,7 +29,7 @@ const WishlistScreen = () => {
     return (
       <>
         <Meta title='Wishlist' />
-         <h1 style={{ marginBottom: '20px' }}>Wishlist</h1>
+        <h1 style={{ marginBottom: '20px' }}>Wishlist</h1>
         <Message>
           Your wishlist is empty.
           <Link to='/' className='btn btn-light ms-2'>
@@ -43,7 +43,7 @@ const WishlistScreen = () => {
   return (
     <>
       <Meta title='Wishlist' />
-       <h1 style={{ marginBottom: '20px' }}>Wishlist</h1>
+      <h1 style={{ marginBottom: '20px' }}>Wishlist</h1>
 
       {isLoading ? (
         <Loader />
@@ -53,7 +53,7 @@ const WishlistScreen = () => {
         </Message>
       ) : (
         <Row>
-          {data.products.map((product) => (
+          {data?.products?.map((product) => (
             <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
               <Product product={product} />
             </Col>

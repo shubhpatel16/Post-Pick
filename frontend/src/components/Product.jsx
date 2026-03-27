@@ -1,29 +1,42 @@
-import { useDispatch } from 'react-redux';
-import { toggleWishlistLocal } from '../slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useToggleWishlistMutation } from '../slices/wishlistApiSlice';
-import { useSelector } from 'react-redux';
 import { Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatCurrency';
+import { toast } from 'react-toastify';
+import { setWishlist } from '../slices/wishlistSlice';
 
 const Product = ({ product }) => {
+  const dispatch = useDispatch(); // ✅ MOVE HERE
+
   const { userInfo } = useSelector((state) => state.auth);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
 
   const [toggleWishlistApi] = useToggleWishlistMutation();
 
-  const isWishlisted = userInfo?.wishlist?.includes(product._id);
+  const isInWishlist = wishlistItems.includes(product._id); // ✅ correct
 
   const toggleWishlist = async (productId) => {
     try {
-      await toggleWishlistApi(productId);
-      dispatch(toggleWishlistLocal(productId));
+      const response = await toggleWishlistApi(productId).unwrap();
+
+      dispatch(setWishlist(response));
+
+      const isNowInWishlist = response.some(
+        (id) => id.toString() === productId.toString()
+      );
+
+      if (isNowInWishlist) {
+        toast.success('Product added to wishlist');
+      } else {
+        toast.info('Product removed from wishlist');
+      }
     } catch (error) {
-      console.error(error);
+      toast.error('Something went wrong');
     }
   };
-  const dispatch = useDispatch();
 
   return (
     <Card className='my-3 p-3 rounded position-relative'>
@@ -33,7 +46,8 @@ const Product = ({ product }) => {
           className='position-absolute top-0 end-0 m-2'
           onClick={() => toggleWishlist(product._id)}
         >
-          {isWishlisted ? <FaHeart color='red' /> : <FaRegHeart />}
+          {/* ✅ FIXED HERE */}
+          {isInWishlist ? <FaHeart color='red' /> : <FaRegHeart />}
         </Button>
       )}
 

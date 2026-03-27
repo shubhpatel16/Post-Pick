@@ -16,6 +16,7 @@ import { addToCart, removeFromCart } from '../slices/cartSlice';
 import { useLocation } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 import { formatCurrency } from '../utils/formatCurrency';
+import { toast } from 'react-toastify';
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ const CartScreen = () => {
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
+    toast.info('Product removed from cart');
   };
 
   const checkoutHandler = () => {
@@ -111,16 +113,23 @@ const CartScreen = () => {
           <ListGroup variant='flush'>
             <ListGroup.Item>
               <h2>
-                Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
-                items
+                Subtotal (
+                {cartItems.reduce(
+                  (acc, item) => acc + Number(item.qty || 0),
+                  0
+                )}{' '}
+                items)
               </h2>
-              {cartItems
-                .reduce(
-                  (acc, item) => acc + item.qty * formatCurrency(item.price),
+
+              {formatCurrency(
+                cartItems.reduce(
+                  (acc, item) =>
+                    acc + Number(item.qty || 0) * Number(item.price || 0),
                   0
                 )
-                .toFixed(2)}
+              )}
             </ListGroup.Item>
+
             <ListGroup.Item>
               <Button
                 type='button'
