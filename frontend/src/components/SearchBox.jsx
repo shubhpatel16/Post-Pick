@@ -8,7 +8,7 @@ const SearchBox = () => {
   const navigate = useNavigate();
   const { keyword: urlKeyword } = useParams();
 
-  // FIX: uncontrolled input - urlKeyword may be undefined
+ 
   const [keyword, setKeyword] = useState(urlKeyword || '');
 
   const submitHandler = async (e) => {
@@ -24,11 +24,11 @@ const SearchBox = () => {
         query: keyword,
       });
 
-      // If AI returns results → use AI results
+      
       if (data && data.length > 0) {
         navigate('/', { state: { smartResults: data } });
       } else {
-        // fallback to normal search
+        
         navigate(`/search/${keyword.trim()}`);
       }
 
@@ -36,7 +36,7 @@ const SearchBox = () => {
     } catch (error) {
       console.error(error);
 
-      // If AI fails → fallback to normal search
+     
       navigate(`/search/${keyword.trim()}`);
     }
   };

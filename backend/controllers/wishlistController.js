@@ -17,12 +17,12 @@ export const toggleWishlist = asyncHandler(async (req, res) => {
   );
 
   if (exists) {
-    // REMOVE
+    
     user.wishlist = user.wishlist.filter(
       (id) => id.toString() !== productId
     );
   } else {
-    // ADD (ONLY ObjectId, NOT product object)
+    
     user.wishlist.push(productId);
   }
 

@@ -21,7 +21,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     };
   }
 
-  // 📦 Orders with optional date filter
+  //  Orders with optional date filter
   const totalOrders = await Order.countDocuments(dateFilter);
 
   const orders = await Order.find(dateFilter);
@@ -35,7 +35,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .limit(5);
 
-  // 📊 Monthly revenue
+  //  Monthly revenue
   const monthlyRevenue = await Order.aggregate([
     { $match: dateFilter },
     {
@@ -153,7 +153,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     },
   ]);
 
-  // 💰 Revenue by Category
+  //  Revenue by Category
   const revenueByCategory = await Order.aggregate([
     { $match: dateFilter }, // respect date filter
 
@@ -234,7 +234,7 @@ const exportSalesPDF = asyncHandler(async (req, res) => {
 
   const doc = new PDFDocument();
 
-  // 🔴 THIS PART IS CRITICAL
+  //  THIS PART IS CRITICAL
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader(
     'Content-Disposition',

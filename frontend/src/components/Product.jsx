@@ -9,14 +9,14 @@ import { toast } from 'react-toastify';
 import { setWishlist } from '../slices/wishlistSlice';
 
 const Product = ({ product }) => {
-  const dispatch = useDispatch(); // ✅ MOVE HERE
+  const dispatch = useDispatch(); 
 
   const { userInfo } = useSelector((state) => state.auth);
   const { wishlistItems } = useSelector((state) => state.wishlist);
 
   const [toggleWishlistApi] = useToggleWishlistMutation();
 
-  const isInWishlist = wishlistItems.includes(product._id); // ✅ correct
+  const isInWishlist = wishlistItems.includes(product._id); 
 
   const toggleWishlist = async (productId) => {
     try {
@@ -46,7 +46,7 @@ const Product = ({ product }) => {
           className='position-absolute top-0 end-0 m-2'
           onClick={() => toggleWishlist(product._id)}
         >
-          {/* ✅ FIXED HERE */}
+          
           {isInWishlist ? <FaHeart color='red' /> : <FaRegHeart />}
         </Button>
       )}

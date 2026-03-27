@@ -95,7 +95,7 @@ const HomeScreen = () => {
           </Button>
         </Col>
       </Row>
-      {/* 🔼 PRICE FILTER END */}
+      {/*  PRICE FILTER END */}
 
       {isLoading ? (
         <Loader />

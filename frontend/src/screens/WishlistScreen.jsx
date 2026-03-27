@@ -15,7 +15,7 @@ const WishlistScreen = () => {
   const wishlistIds =
     wishlistItems && wishlistItems.length > 0 ? wishlistItems.join(',') : null;
 
-  // ✅ HOOK IS ALWAYS CALLED
+  //  HOOK IS ALWAYS CALLED
   const { data, isLoading, error } = useGetProductsQuery(
     wishlistIds ? { wishlist: wishlistIds } : {},
     { skip: !wishlistIds }

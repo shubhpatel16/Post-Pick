@@ -9,7 +9,7 @@ const getProducts = asyncHandler(async (req, res) => {
   const pageSize = process.env.PAGINATION_LIMIT || 8;
   const page = Number(req.query.pageNumber) || 1;
 
-  // 🔍 Keyword search
+  //  Keyword search
   const keyword = req.query.keyword
     ? {
         name: {
@@ -19,10 +19,10 @@ const getProducts = asyncHandler(async (req, res) => {
       }
     : {};
 
-  // 🧥 Category filter
+  //  Category filter
   const category = req.query.category ? { category: req.query.category } : {};
 
-  // 💰 Price filter
+  //  Price filter
   const priceFilter = {};
   if (req.query.minPrice) {
     priceFilter.$gte = Number(req.query.minPrice);
@@ -34,14 +34,14 @@ const getProducts = asyncHandler(async (req, res) => {
   const price =
     Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
 
-  // 🧠 Combine base filters
+  //  Combine base filters
   const filter = {
     ...keyword,
     ...category,
     ...price,
   };
 
-  // ❤️ Wishlist filter
+  //  Wishlist filter
   if (req.query.wishlist) {
     const ids = req.query.wishlist
       .split(',')
@@ -50,10 +50,10 @@ const getProducts = asyncHandler(async (req, res) => {
     filter._id = { $in: ids };
   }
 
-  // 🔢 Count
+  //  Count
   const count = await Product.countDocuments(filter);
 
-  // 🔽 Sorting
+  //  Sorting
   let sortOption = { createdAt: -1 };
 
   if (req.query.sort === 'price_asc') {
@@ -64,7 +64,7 @@ const getProducts = asyncHandler(async (req, res) => {
     sortOption = { rating: -1 };
   }
 
-  // 📦 Fetch products
+  //  Fetch products
   const products = await Product.find(filter)
     .sort(sortOption)
     .limit(pageSize)
@@ -81,15 +81,13 @@ const getProducts = asyncHandler(async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler(async (req, res) => {
-  // NOTE: checking for valid ObjectId to prevent CastError moved to separate
-  // middleware. See README for more info.
+  
 
   const product = await Product.findById(req.params.id);
   if (product) {
     return res.json(product);
   } else {
-    // NOTE: this will run if a valid ObjectId but no product was found
-    // i.e. product may be null
+    
     res.status(404);
     throw new Error('Product not found');
   }

@@ -1,6 +1,5 @@
-/* ============================= */
+
 /* THEME VARIABLES */
-/* ============================= */
 
 :root {
   --bg-color: #000000;
@@ -23,9 +22,9 @@ body.light-theme {
 }
 
 
-/* ============================= */
+
 /* GLOBAL THEME - PREMIUM BLACK */
-/* ============================= */
+
 
 body {
   padding-top: 90px;
@@ -54,9 +53,9 @@ a:hover {
   color: #cccccc;
 }
 
-/* ============================= */
+
 /* RATING */
-/* ============================= */
+
 
 .rating span {
   margin: 0.1rem;
@@ -73,9 +72,9 @@ a:hover {
   color: #aaaaaa;
 }
 
-/* ============================= */
+
 /* PRODUCT TITLE */
-/* ============================= */
+
 
 .product-title {
   height: 2.5em;
@@ -86,9 +85,9 @@ a:hover {
   letter-spacing: 0.5px;
 }
 
-/* ============================= */
+
 /* TABLES (Admin + Orders) */
-/* ============================= */
+
 
 table td,
 table th {
@@ -98,9 +97,9 @@ table th {
   border-color: #222222 !important;
 }
 
-/* ============================= */
+
 /* REVIEW SECTION */
-/* ============================= */
+
 
 .review {
   margin-top: 30px;
@@ -120,9 +119,9 @@ table th {
   margin-top: 10px;
 }
 
-/* ============================= */
+
 /* CAROUSEL */
-/* ============================= */
+
 
 .carousel-caption {
   position: absolute;
@@ -134,9 +133,8 @@ table th {
   padding: 20px;
 }
 
-/* ============================= */
+
 /* PRODUCT CARD IMAGE WRAPPER */
-/* ============================= */
 
 .product-image-wrapper {
   height: 250px;
@@ -159,9 +157,9 @@ table th {
   transition: transform 0.4s ease;
 }
 
-/* ============================= */
+
 /* CARD STYLING */
-/* ============================= */
+
 
 .card {
  background-color: var(--card-bg);
@@ -176,9 +174,9 @@ table th {
   box-shadow: 0px 8px 30px rgba(255, 255, 255, 0.05);
 }
 
-/* ============================= */
+
 /* BUTTONS */
-/* ============================= */
+
 
 .btn-primary {
   background-color: var(--btn-bg);
@@ -205,9 +203,9 @@ table th {
   color: #000000 !important;
 }
 
-/* ============================= */
+
 /* FOOTER */
-/* ============================= */
+
 
 .footer {
   background-color: #000000;
@@ -260,9 +258,8 @@ table th {
   color: #777777;
 }
 
-/* ============================= */
+
 /* MOBILE OPTIMIZATION */
-/* ============================= */
 
 @media (max-width: 768px) {
 
@@ -299,9 +296,8 @@ table th {
   }
 }
 
-/* ============================= */
 /* PREMIUM NAVBAR */
-/* ============================= */
+
 
 .premium-navbar {
   background-color: rgba(0, 0, 0, 0.95) !important;
@@ -408,9 +404,8 @@ table th {
   }
 }
 
-/* ============================= */
+
 /* LIST GROUP (VIP CUSTOMERS) */
-/* ============================= */
 
 .list-group-item {
   background-color: var(--card-bg) !important;
@@ -419,9 +414,8 @@ table th {
 }
 
 
-/* ============================= */
+
 /* GLOBAL TABLE THEME CONTROL */
-/* ============================= */
 
 .table {
   background-color: transparent !important;

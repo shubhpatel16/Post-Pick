@@ -130,7 +130,7 @@ const AdminDashboardScreen = () => {
             </Col>
           </Row>
 
-          {/* 📊 Monthly Revenue Chart */}
+          {/*  Monthly Revenue Chart */}
           <Card className='p-3 mb-4'>
             <h4 className='mb-3'>Monthly Revenue</h4>
 
@@ -156,7 +156,7 @@ const AdminDashboardScreen = () => {
             </div>
           )}
 
-          {/* 📦 Low Stock Alert */}
+          {/*  Low Stock Alert */}
           <Card className='p-3 mb-4'>
             <h4>Low Stock Products</h4>
 

@@ -6,7 +6,7 @@ const createPaymentIntent = async (req, res) => {
   try {
     let { amount } = req.body;
 
-    // convert to paise
+    
     let stripeAmount = Math.round(Number(amount) * 100);
 
     // Stripe minimum safety
