@@ -217,22 +217,22 @@ const getProductRecommendations = async (req, res) => {
 
   const products = await Product.find({
     _id: { $ne: product._id },
+    category: product.category,
+    price: {
+      $gte: product.price * 0.5,
+      $lte: product.price * 1.5,
+    },
   });
 
   const scoredProducts = products.map((item) => {
     let score = 0;
 
-    // Same category
     if (item.category === product.category) score += 40;
-
-    // Same brand
     if (item.brand === product.brand) score += 30;
 
-    // Price similarity
     const priceDiff = Math.abs(item.price - product.price);
-    score += Math.max(0, 25 - priceDiff / 5);
+    score += Math.max(0, 30 - priceDiff / 10);
 
-    // Rating boost
     score += item.rating * 10;
 
     return { ...item._doc, score };
