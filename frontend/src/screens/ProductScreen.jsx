@@ -47,7 +47,7 @@ const ProductScreen = () => {
 
   const addToCartHandler = () => {
     dispatch(addToCart({ ...product, qty }));
-     toast.success('Product added to cart');
+    toast.success('Product added to cart');
     navigate('/cart');
   };
 
@@ -110,7 +110,12 @@ const ProductScreen = () => {
                     text={`${product.numReviews} reviews`}
                   />
                 </ListGroup.Item>
-                <ListGroup.Item>Price: {formatCurrency(product.price)}</ListGroup.Item>
+                <ListGroup.Item>
+                  <strong>Brand:</strong> {product.brand}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  Price: {formatCurrency(product.price)}
+                </ListGroup.Item>
                 <ListGroup.Item>
                   Description: {product.description}
                 </ListGroup.Item>

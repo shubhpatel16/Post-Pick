@@ -81,13 +81,10 @@ const getProducts = asyncHandler(async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler(async (req, res) => {
-  
-
   const product = await Product.findById(req.params.id);
   if (product) {
     return res.json(product);
   } else {
-    
     res.status(404);
     throw new Error('Product not found');
   }
@@ -207,7 +204,7 @@ const getTopProducts = asyncHandler(async (req, res) => {
 // @desc    Get product recommendations
 // @route   GET /api/products/:id/recommendations
 // @access  Public
-const getProductRecommendations = async (req, res) => {
+const getProductRecommendations = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
@@ -215,25 +212,50 @@ const getProductRecommendations = async (req, res) => {
     throw new Error('Product not found');
   }
 
-  const products = await Product.find({
+  // 1. First try: same category + similar price range
+  let products = await Product.find({
     _id: { $ne: product._id },
     category: product.category,
     price: {
       $gte: product.price * 0.5,
-      $lte: product.price * 1.5,
+      $lte: product.price * 1.8,
     },
   });
+
+  // 2. Fallback: if no similar-price products, use same category only
+  if (products.length === 0) {
+    products = await Product.find({
+      _id: { $ne: product._id },
+      category: product.category,
+    });
+  }
+
+  // 3. Final fallback: if still empty, use top-rated products
+  if (products.length === 0) {
+    products = await Product.find({
+      _id: { $ne: product._id },
+    })
+      .sort({ rating: -1, numReviews: -1 })
+      .limit(6);
+  }
 
   const scoredProducts = products.map((item) => {
     let score = 0;
 
-    if (item.category === product.category) score += 40;
-    if (item.brand === product.brand) score += 30;
+    // Category (most important)
+    if (item.category === product.category) score += 50;
 
+    // Brand (less important)
+    if (item.brand === product.brand) score += 20;
+
+    // Price similarity (important)
     const priceDiff = Math.abs(item.price - product.price);
-    score += Math.max(0, 30 - priceDiff / 10);
+    if (priceDiff < product.price * 0.5) {
+      score += 30;
+    }
 
-    score += item.rating * 10;
+    // Rating (least important)
+    score += item.rating * 5;
 
     return { ...item._doc, score };
   });
@@ -241,7 +263,7 @@ const getProductRecommendations = async (req, res) => {
   scoredProducts.sort((a, b) => b.score - a.score);
 
   res.json(scoredProducts.slice(0, 6));
-};
+});
 
 const getTrendingProducts = async (req, res) => {
   const products = await Product.find({})
@@ -250,8 +272,6 @@ const getTrendingProducts = async (req, res) => {
 
   res.json(products);
 };
-
-
 
 export {
   getProducts,
